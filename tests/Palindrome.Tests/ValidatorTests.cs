@@ -4,6 +4,7 @@
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     [TestFixture]
     class ValidatorTests
@@ -35,9 +36,7 @@
                 new ValidationResult(word, 0, 1)
             };
 
-            var actualPalindromes = _validator.GetFrom(word);
-
-            actualPalindromes.ShouldBeEquivalentTo(expectedResults);
+            AssertThatGetFromReturnExpectedResult(word, expectedResults);
         }
 
         [Test]
@@ -51,18 +50,14 @@
                 new ValidationResult(word, 0, word.Length)
             };
 
-            var actualPalindromes = _validator.GetFrom(word);
-
-            actualPalindromes.ShouldBeEquivalentTo(expectedResults);
+            AssertThatGetFromReturnExpectedResult(word, expectedResults);
         }
-
 
         [Test]
         [TestCaseSource(nameof(GetCasesForDescendingOrder))]
         public void GetFrom_ShouldReturnResultsInDescendingOrderByLengthOfPalindrome(string word, IEnumerable<ValidationResult> expectedResults)
         {
-            var actualPalindromes = _validator.GetFrom(word);
-            actualPalindromes.ShouldBeEquivalentTo(expectedResults, config => config.WithStrictOrdering());
+            AssertThatGetFromReturnExpectedResult(word, expectedResults);
         }
 
         private static IEnumerable<TestCaseData> GetCasesForDescendingOrder()
@@ -84,6 +79,52 @@
                 new ValidationResult("-", 6, 1)
             };
             yield return new TestCaseData(word, expectedResults);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(GetCasesForIntersectedPalindromes))]
+        public void GetFrom_ShouldReturnExpectedResultWhenPalindromeUsesSameLetters(string word, IEnumerable<ValidationResult> expectedResults)
+        {
+            AssertThatGetFromReturnExpectedResult(word, expectedResults);
+        }
+
+        private static IEnumerable<TestCaseData> GetCasesForIntersectedPalindromes()
+        {
+            var word = "123-321123";
+            var expectedResults = new[]
+            {
+                new ValidationResult("123-321", 0, 7),
+                new ValidationResult("321123", 4, 6)
+            };
+            yield return new TestCaseData(word, expectedResults);
+
+            word = "noonono";
+            expectedResults = new[]
+            {
+                new ValidationResult("onono", 2, 5),
+                new ValidationResult("noon", 0, 4)
+            };
+            yield return new TestCaseData(word, expectedResults);
+        }
+
+        [Test]
+        public void GetFrom_ShouldReturnThreeLongestPalindromes()
+        {
+            var word = "sqrrqabccbatudefggfedvwhijkllkjihxymnnmzpop";
+            var expectedResults = new[]
+            {
+                new ValidationResult("hijkllkjih", 23, 10),
+                new ValidationResult("defggfed", 13, 8),
+                new ValidationResult("abccba", 5, 6)
+            };
+            var actualPalindromes = _validator.GetFrom(word).Take(3);
+            actualPalindromes.ShouldBeEquivalentTo(expectedResults, config => config.WithStrictOrdering());
+        }
+
+        private void AssertThatGetFromReturnExpectedResult(string word, IEnumerable<ValidationResult> expected)
+        {
+            var actualPalindromes = _validator.GetFrom(word);
+            actualPalindromes.ShouldBeEquivalentTo(expected, config => config.WithStrictOrdering());
         }
     }
 }
