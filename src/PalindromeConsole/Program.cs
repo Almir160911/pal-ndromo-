@@ -1,8 +1,8 @@
 ﻿namespace PalindromeConsole
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     public class Program
     {
@@ -11,13 +11,17 @@
             var validator = new Palindrome.Validator();
 
             var word = args.FirstOrDefault();
-            var results = validator.GetFrom(word).Take(3);
+            var formattedResults = validator.GetFrom(word).Take(3).Select(result => result.Format());
 
-            foreach(var formattedResult in results.Select(result => result.Format()))
+            Print(formattedResults);
+        }     
+        
+        private static void Print(IEnumerable<string> formattedResults)
+        {
+            foreach(var formattedResult in formattedResults)
             {
                 Console.WriteLine(formattedResult);
             }
-
         }
     }
 }
