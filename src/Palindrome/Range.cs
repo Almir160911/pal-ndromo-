@@ -13,5 +13,10 @@
             Start = start;
             End = end;
         }
+
+        public bool ContainsRangeOf(int start, int end)
+        {
+            return Start <= start && End >= end;
+        }
     }
 }
