@@ -17,7 +17,7 @@
             var expectedOutputBuilder = new StringBuilder();
             expectedOutputBuilder.AppendLine("Text: hijkllkjih, Index: 23, Length: 10");
             expectedOutputBuilder.AppendLine("Text: defggfed, Index: 13, Length: 8");
-            expectedOutputBuilder.AppendLine("Text: abccba, Index: 5 Length: 6");
+            expectedOutputBuilder.AppendLine("Text: abccba, Index: 5, Length: 6");
             var expectedOutput = expectedOutputBuilder.ToString();
 
             var actualOutputBuilder = new StringBuilder();
